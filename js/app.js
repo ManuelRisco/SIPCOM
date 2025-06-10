@@ -322,6 +322,7 @@ function mostrarFormularioPago() {
     btnAbrirMapa.onclick = function() {
         modalMinimapa.style.display = 'flex';
         // Cargar MapLibre GL JS solo una vez
+        // Cambia la URL del style a tiles de MapTiler (que sí funcionan en sitios estáticos como GitHub Pages)
         if (!window.maplibregl) {
             const link = document.createElement('link');
             link.rel = 'stylesheet';
@@ -329,10 +330,16 @@ function mostrarFormularioPago() {
             document.head.appendChild(link);
             const script = document.createElement('script');
             script.src = 'https://unpkg.com/maplibre-gl@3.6.1/dist/maplibre-gl.js';
-            script.onload = inicializarMapa;
+            script.onload = function() {
+                inicializarMapa();
+            };
             document.body.appendChild(script);
         } else {
             inicializarMapa();
+        }
+        // ...cargar Google Maps Autocomplete si lo usas...
+        if (typeof cargarGoogleMapsScript === 'function') {
+            cargarGoogleMapsScript(inicializarGoogleAutocomplete);
         }
     };
 
@@ -341,10 +348,10 @@ function mostrarFormularioPago() {
             map.resize();
             return;
         }
-        // MapLibre GL JS con tiles de OpenStreetMap
+        // Usa MapTiler OSM style
         map = new maplibregl.Map({
             container: 'mapa-direccion',
-            style: 'https://tiles.stadiamaps.com/styles/osm_bright.json',
+            style: 'https://api.maptiler.com/maps/streets/style.json?key=ZgTUHkn0xjl3aHuyWf7B',
             center: [-77.0151, -12.1894], // [lng, lat]
             zoom: 15
         });
@@ -723,6 +730,7 @@ function mostrarFormularioPago() {
     btnAbrirMapa.onclick = function() {
         modalMinimapa.style.display = 'flex';
         // Cargar MapLibre GL JS solo una vez
+        // Cambia la URL del style a tiles de MapTiler (que sí funcionan en sitios estáticos como GitHub Pages)
         if (!window.maplibregl) {
             const link = document.createElement('link');
             link.rel = 'stylesheet';
@@ -730,10 +738,16 @@ function mostrarFormularioPago() {
             document.head.appendChild(link);
             const script = document.createElement('script');
             script.src = 'https://unpkg.com/maplibre-gl@3.6.1/dist/maplibre-gl.js';
-            script.onload = inicializarMapa;
+            script.onload = function() {
+                inicializarMapa();
+            };
             document.body.appendChild(script);
         } else {
             inicializarMapa();
+        }
+        // ...cargar Google Maps Autocomplete si lo usas...
+        if (typeof cargarGoogleMapsScript === 'function') {
+            cargarGoogleMapsScript(inicializarGoogleAutocomplete);
         }
     };
 
@@ -742,10 +756,10 @@ function mostrarFormularioPago() {
             map.resize();
             return;
         }
-        // MapLibre GL JS con tiles de OpenStreetMap
+        // Usa MapTiler OSM style
         map = new maplibregl.Map({
             container: 'mapa-direccion',
-            style: 'https://tiles.stadiamaps.com/styles/osm_bright.json',
+            style: 'https://api.maptiler.com/maps/streets/style.json?key=ZgTUHkn0xjl3aHuyWf7B',
             center: [-77.0151, -12.1894], // [lng, lat]
             zoom: 15
         });
@@ -836,4 +850,12 @@ function mostrarFormularioPago() {
         errorDiv.textContent = msg || '';
     }
 }
+
+// Sobre la API key de MapTiler:
+// - La API key gratuita de MapTiler no expira, pero tiene límites de uso mensual (consultar en https://cloud.maptiler.com/).
+// - Si superas el límite gratuito, el mapa dejará de cargar hasta el siguiente mes o hasta que actualices a un plan de pago.
+// - No necesitas cambiar la clave periódicamente, solo si la revocas, la borras o MapTiler cambia sus políticas.
+// - Si la clave se filtra y ves uso sospechoso, puedes regenerarla en el panel de MapTiler.
+
+// Recomendación: revisa tu cuenta MapTiler cada cierto tiempo para ver el uso y posibles avisos de límite.
 

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrar Proveedores - El Bambino</title>
+    <link rel="stylesheet" href="css/admin-panel.css">
+    <link rel="stylesheet" href="css/admin-proveedores.css">
+    <link rel="icon" type="image/webp" href="imagenes/logo/Logo.webp" />
+</head>
+<body>
+    <div class="admin-panel-container">
+        <div class="admin-header">
+            <img src="imagenes/logo/Logo.webp" alt="El Bambino - Pollos a la Brasa" class="admin-logo">
+            <h1>Administrar Proveedores</h1>
+        </div>
+
+        <!-- Panel de proveedores -->
+        <div id="proveedores-section">
+            <div class="fila-botones-superior">
+                <span id="bienvenida-proveedores"></span>
+                <button id="cerrar-sesion-proveedores">Cerrar Sesión</button>
+                <button id="btn-volver-panel" type="button">Volver</button>
+            </div>
+            <div id="admin-actions-proveedores">
+                <h2>Agregar/Editar Proveedor</h2>
+                <form id="proveedor-form">
+                    <input type="hidden" id="proveedor-id">
+                    <input type="text" id="razonSocial" placeholder="Razón Social" required>
+                    <input type="text" id="ruc" placeholder="RUC" maxlength="15" required>
+                    <input type="text" id="telefono" placeholder="Teléfono" maxlength="20">
+                    <input type="email" id="correo" placeholder="Correo" maxlength="100">
+                    <input type="text" id="direccion" placeholder="Dirección" maxlength="200">
+                    <select id="estado-proveedor" required>
+                        <option value="1">Activo</option>
+                        <option value="0">Inactivo</option>
+                    </select>
+                    <button type="submit">Guardar</button>
+                    <button type="button" id="cancelar-edicion-proveedor" class="hidden">Cancelar</button>
+                </form>
+                <div id="form-msg-proveedor"></div>
+            </div>
+            <h2>Lista de Proveedores</h2>
+            <table id="tabla-proveedores">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Razón Social</th>
+                        <th>RUC</th>
+                        <th>Teléfono</th>
+                        <th>Correo</th>
+                        <th>Dirección</th>
+                        <th>Estado</th>
+                        <th>Fecha Registro</th>
+                        <th class="actions">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+        // Acceso y bienvenida
+        document.addEventListener('DOMContentLoaded', function() {
+            const sesion = JSON.parse(localStorage.getItem('usuarioSesion'));
+            if (!sesion || sesion.estado === 0 || (sesion.rol !== 'admin' && sesion.rol !== 'supervisor' && sesion.rol !== 'vendedor')) {
+                localStorage.removeItem('usuarioSesion');
+                localStorage.removeItem('usuario');
+                localStorage.setItem('loginMsg', 'Usuario inactivo. Contacte al administrador.');
+                window.location.href = "login.html";
+                return;
+            }
+            document.getElementById('bienvenida-proveedores').textContent = `Bienvenido, ${sesion.nombres || sesion.nombreUsuario} (${sesion.rol})`;
+            document.getElementById('cerrar-sesion-proveedores').onclick = function() {
+                localStorage.removeItem('usuarioSesion');
+                localStorage.removeItem('usuario');
+                window.location.href = "login.html";
+            };
+            document.getElementById('btn-volver-panel').onclick = function() {
+                window.location.href = 'admin-panel.html';
+            };
+        });
+    </script>
+    <script src="js/admin-proveedores.js"></script>
+</body>
+</html>
