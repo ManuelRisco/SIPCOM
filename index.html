@@ -549,6 +549,21 @@
         <h2>¡Gracias por suscribirte!</h2>
         <p>Te mantendremos informado de nuestras promociones y novedades.</p>
     </div>
+
+    <!-- Script para cambiar el título de la página -->
+    <script>
+        // Detectar si el usuario cambia de pestaña o sale de la página
+        var originalTitle = document.title;
+        var leaveTitle = "¡No te vayas! 😢";
+
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                document.title = leaveTitle;
+            } else {
+                document.title = originalTitle;
+            }
+        });
+    </script>
 </body>
 
 </html>
