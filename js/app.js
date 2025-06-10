@@ -227,6 +227,226 @@ function renderizarCarrito() {
     }, 10);
 }
 
+function mostrarFormularioPago() {
+    const modal = document.getElementById('modal-carrito');
+    const lista = modal.querySelector('.carrito-lista');
+    const totalDiv = modal.querySelector('.carrito-total');
+    const carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+    let total = carrito.reduce((acc, item) => {
+        const precioNum = parseFloat(item.precio.replace(/[^\d.]/g, '')) || 0;
+        return acc + precioNum * item.cantidad;
+    }, 0);
+    lista.innerHTML = `
+        <form class="form-pago-carrito" style="display:flex;flex-direction:column;gap:16px;">
+            <label>Tipo de Documento:<br>
+                <select name="tipoDocumento" required style="width:100%;padding:8px;">
+                    <option value="DNI">DNI</option>
+                    <option value="RUC">RUC</option>
+                    <option value="CE">CE</option>
+                    <option value="Pasaporte">Pasaporte</option>
+                </select>
+            </label>
+            <label>Número de Documento:<br>
+                <input type="text" name="numeroDocumento" required maxlength="20" style="width:100%;padding:8px;">
+            </label>
+            <label>Nombres:<br>
+                <input type="text" name="nombres" required maxlength="100" style="width:100%;padding:8px;">
+            </label>
+            <label>Apellidos:<br>
+                <input type="text" name="apellidos" maxlength="100" style="width:100%;padding:8px;">
+            </label>
+            <label>Correo:<br>
+                <input type="email" name="correo" maxlength="100" style="width:100%;padding:8px;">
+            </label>
+            <label>Teléfono:<br>
+                <input type="text" name="telefono" maxlength="20" style="width:100%;padding:8px;">
+            </label>
+            <label>Dirección:<br>
+                <input type="text" name="direccion" id="input-direccion" maxlength="200" style="width:100%;padding:8px;" required>
+                <button type="button" id="btn-abrir-mapa" class="btn-finalizar-pedido" style="margin-top:8px;margin-left:0;">Seleccionar en mapa</button>
+            </label>
+            <label>Comentario (opcional):<br>
+                <textarea name="comentario" style="width:100%;padding:8px;"></textarea>
+            </label>
+            <label>Método de pago:<br>
+                <select name="metodoPago" required style="width:100%;padding:8px;">
+                    <option value="">Selecciona un método</option>
+                    <option value="Efectivo">Efectivo</option>
+                    <option value="Yape">Yape</option>
+                    <option value="Plin">Plin</option>
+                    <option value="Tarjeta">Tarjeta</option>
+                </select>
+            </label>
+            <button type="submit" class="btn-finalizar-pedido">FINALIZAR PEDIDO</button>
+            <button type="button" class="btn-cancelar-pago">Cancelar</button>
+        </form>
+        <div id="modal-minimapa" style="display:none;position:fixed;z-index:9999;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.5);align-items:center;justify-content:center;">
+            <div style="background:#fff;padding:16px;border-radius:12px;max-width:98vw;max-height:98vh;position:relative;box-shadow:0 4px 24px #0003;">
+                <button id="cerrar-minimapa" class="btn-cerrar-mapa" style="position:absolute;top:12px;right:12px;">&times;</button>
+                <h3 style="margin-bottom:12px;">Selecciona tu ubicación</h3>
+                <div id="mapa-direccion" style="width:600px;height:500px;max-width:95vw;max-height:80vh;border-radius:8px;overflow:hidden;"></div>
+                <div style="margin-top:18px;text-align:center;">
+                    <button id="btn-usar-ubicacion" class="btn-finalizar-pedido">Usar esta dirección</button>
+                </div>
+            </div>
+        </div>
+    `;
+    totalDiv.innerHTML = `<strong>Total: S/ ${total.toFixed(2)}</strong>`;
+    // Evento submit
+    const form = modal.querySelector('.form-pago-carrito');
+    form.onsubmit = function(e) {
+        e.preventDefault();
+        // Guardar en historial
+        const datos = Object.fromEntries(new FormData(form));
+        guardarPedidoEnHistorial({
+            items: carrito,
+            total,
+            fecha: new Date().toLocaleString(),
+            ...datos
+        });
+        lista.innerHTML = '<h3>¡Gracias por tu pedido! Pronto nos comunicaremos contigo.</h3>';
+        totalDiv.innerHTML = '';
+        localStorage.removeItem('carrito');
+        actualizarContadorCarrito();
+    };
+    // Botón cancelar
+    form.querySelector('.btn-cancelar-pago').onclick = function() {
+        renderizarCarrito();
+    };
+
+    // Mapa: solo carga si se abre el modal
+    const btnAbrirMapa = document.getElementById('btn-abrir-mapa');
+    const modalMinimapa = document.getElementById('modal-minimapa');
+    let map, marker, selectedLatLng;
+
+    btnAbrirMapa.onclick = function() {
+        modalMinimapa.style.display = 'flex';
+        // Cargar MapLibre GL JS solo una vez
+        if (!window.maplibregl) {
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = 'https://unpkg.com/maplibre-gl@3.6.1/dist/maplibre-gl.css';
+            document.head.appendChild(link);
+            const script = document.createElement('script');
+            script.src = 'https://unpkg.com/maplibre-gl@3.6.1/dist/maplibre-gl.js';
+            script.onload = inicializarMapa;
+            document.body.appendChild(script);
+        } else {
+            inicializarMapa();
+        }
+    };
+
+    function inicializarMapa() {
+        if (map) {
+            map.resize();
+            return;
+        }
+        // MapLibre GL JS con tiles de OpenStreetMap
+        map = new maplibregl.Map({
+            container: 'mapa-direccion',
+            style: 'https://tiles.stadiamaps.com/styles/osm_bright.json',
+            center: [-77.0151, -12.1894], // [lng, lat]
+            zoom: 15
+        });
+
+        marker = new maplibregl.Marker({draggable: true})
+            .setLngLat([-77.0151, -12.1894])
+            .addTo(map);
+
+        selectedLatLng = {lat: -12.1894, lng: -77.0151};
+
+        marker.on('dragend', function() {
+            const lngLat = marker.getLngLat();
+            selectedLatLng = {lat: lngLat.lat, lng: lngLat.lng};
+        });
+
+        map.on('click', function(e) {
+            marker.setLngLat(e.lngLat);
+            selectedLatLng = {lat: e.lngLat.lat, lng: e.lngLat.lng};
+        });
+    }
+
+    document.getElementById('cerrar-minimapa').onclick = function() {
+        modalMinimapa.style.display = 'none';
+    };
+
+    document.getElementById('btn-usar-ubicacion').onclick = function() {
+        if (selectedLatLng) {
+            // Geocoding con Nominatim (OpenStreetMap)
+            const lat = selectedLatLng.lat;
+            const lng = selectedLatLng.lng;
+            const direccionInput = document.getElementById('input-direccion');
+            direccionInput.value = `Cargando dirección...`;
+            fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.display_name) {
+                        direccionInput.value = data.display_name;
+                    } else {
+                        direccionInput.value = `Ubicación: ${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+                    }
+                })
+                .catch(() => {
+                    direccionInput.value = `Ubicación: ${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+                });
+            modalMinimapa.style.display = 'none';
+        }
+    };
+
+    // Geocodificar dirección escrita y mostrar en el mapa solo si la encuentra (solo Perú)
+    const inputDireccion = document.getElementById('input-direccion');
+    inputDireccion.addEventListener('change', function() {
+        const direccion = inputDireccion.value.trim();
+        if (!direccion || !window.maplibregl || !map) return;
+        // Limita la búsqueda a Perú usando el parámetro countrycodes=pe
+        fetch(`https://nominatim.openstreetmap.org/search?format=json&countrycodes=pe&q=${encodeURIComponent(direccion)}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data && data.length > 0) {
+                    const lat = parseFloat(data[0].lat);
+                    const lon = parseFloat(data[0].lon);
+                    map.setCenter([lon, lat]);
+                    map.setZoom(16);
+                    marker.setLngLat([lon, lat]);
+                    selectedLatLng = {lat, lng: lon};
+                    // Quita mensaje de error si lo hubiera
+                    mostrarErrorMapa('');
+                } else {
+                    mostrarErrorMapa('No se encontró la dirección en el mapa.');
+                }
+            })
+            .catch(() => {
+                mostrarErrorMapa('Error al buscar la dirección.');
+            });
+    });
+
+    // Mostrar mensaje de error debajo del mapa si la dirección no se encuentra
+    function mostrarErrorMapa(msg) {
+        let errorDiv = document.getElementById('mapa-direccion-error');
+        if (!errorDiv) {
+            errorDiv = document.createElement('div');
+            errorDiv.id = 'mapa-direccion-error';
+            errorDiv.style.color = '#c0392b';
+            errorDiv.style.marginTop = '8px';
+            errorDiv.style.fontWeight = '500';
+            const contenedor = document.getElementById('contenedor-minimapa') || document.getElementById('mapa-direccion').parentNode;
+            contenedor.appendChild(errorDiv);
+        }
+        errorDiv.textContent = msg || '';
+    }
+}
+
+/*=========================================
+    HISTORIAL DE PEDIDOS
+==========================================*/
+
+// Guarda el pedido en el historial en localStorage
+function guardarPedidoEnHistorial(pedido) {
+    let historial = JSON.parse(localStorage.getItem('historialPedidos')) || [];
+    historial.push(pedido);
+    localStorage.setItem('historialPedidos', JSON.stringify(historial));
+}
+
 function mostrarHistorialPedidos() {
     let historial = JSON.parse(localStorage.getItem('historialPedidos')) || [];
     crearModalHistorial();
@@ -246,8 +466,15 @@ function mostrarHistorialPedidos() {
                     }).join('')}
                 </ul>
                 <div style='margin-top:6px;'><strong>Total: S/ ${pedido.total.toFixed(2)}</strong></div>
-                <div style='font-size:0.95em;color:#555;margin-top:2px;'>Nombre: ${pedido.nombre} | Tel: ${pedido.telefono}</div>
-                <div style='font-size:0.95em;color:#555;'>Dirección: ${pedido.direccion}</div>
+                <div style='font-size:0.95em;color:#555;margin-top:2px;'>
+                    <strong>Tipo Doc:</strong> ${pedido.tipoDocumento || ''} |
+                    <strong>N° Doc:</strong> ${pedido.numeroDocumento || ''}
+                </div>
+                <div style='font-size:0.95em;color:#555;'><strong>Nombres:</strong> ${pedido.nombres || ''}</div>
+                <div style='font-size:0.95em;color:#555;'><strong>Apellidos:</strong> ${pedido.apellidos || ''}</div>
+                <div style='font-size:0.95em;color:#555;'><strong>Correo:</strong> ${pedido.correo || ''}</div>
+                <div style='font-size:0.95em;color:#555;'><strong>Teléfono:</strong> ${pedido.telefono || ''}</div>
+                <div style='font-size:0.95em;color:#555;'><strong>Dirección:</strong> ${pedido.direccion || ''}</div>
                 <div style='font-size:0.95em;color:#555;'>Método de pago: <strong>${pedido.metodoPago || 'No especificado'}</strong></div>
                 ${pedido.comentario ? `<div style='font-size:0.95em;color:#555;'>Comentario: ${pedido.comentario}</div>` : ''}
             </div>`;
@@ -412,10 +639,36 @@ function mostrarFormularioPago() {
     }, 0);
     lista.innerHTML = `
         <form class="form-pago-carrito" style="display:flex;flex-direction:column;gap:16px;">
-            <label>Nombre completo:<br><input type="text" name="nombre" required style="width:100%;padding:8px;"></label>
-            <label>Teléfono:<br><input type="tel" name="telefono" required style="width:100%;padding:8px;"></label>
-            <label>Dirección de entrega:<br><input type="text" name="direccion" required style="width:100%;padding:8px;"></label>
-            <label>Comentario (opcional):<br><textarea name="comentario" style="width:100%;padding:8px;"></textarea></label>
+            <label>Tipo de Documento:<br>
+                <select name="tipoDocumento" required style="width:100%;padding:8px;">
+                    <option value="DNI">DNI</option>
+                    <option value="RUC">RUC</option>
+                    <option value="CE">CE</option>
+                    <option value="Pasaporte">Pasaporte</option>
+                </select>
+            </label>
+            <label>Número de Documento:<br>
+                <input type="text" name="numeroDocumento" required maxlength="20" style="width:100%;padding:8px;">
+            </label>
+            <label>Nombres:<br>
+                <input type="text" name="nombres" required maxlength="100" style="width:100%;padding:8px;">
+            </label>
+            <label>Apellidos:<br>
+                <input type="text" name="apellidos" maxlength="100" style="width:100%;padding:8px;">
+            </label>
+            <label>Correo:<br>
+                <input type="email" name="correo" maxlength="100" style="width:100%;padding:8px;">
+            </label>
+            <label>Teléfono:<br>
+                <input type="text" name="telefono" maxlength="20" style="width:100%;padding:8px;">
+            </label>
+            <label>Dirección:<br>
+                <input type="text" name="direccion" id="input-direccion" maxlength="200" style="width:100%;padding:8px;" required>
+                <button type="button" id="btn-abrir-mapa" class="btn-finalizar-pedido" style="margin-top:8px;margin-left:0;">Seleccionar en mapa</button>
+            </label>
+            <label>Comentario (opcional):<br>
+                <textarea name="comentario" style="width:100%;padding:8px;"></textarea>
+            </label>
             <label>Método de pago:<br>
                 <select name="metodoPago" required style="width:100%;padding:8px;">
                     <option value="">Selecciona un método</option>
@@ -428,6 +681,16 @@ function mostrarFormularioPago() {
             <button type="submit" class="btn-finalizar-pedido">FINALIZAR PEDIDO</button>
             <button type="button" class="btn-cancelar-pago">Cancelar</button>
         </form>
+        <div id="modal-minimapa" style="display:none;position:fixed;z-index:9999;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.5);align-items:center;justify-content:center;">
+            <div style="background:#fff;padding:16px;border-radius:12px;max-width:98vw;max-height:98vh;position:relative;box-shadow:0 4px 24px #0003;">
+                <button id="cerrar-minimapa" class="btn-cerrar-mapa" style="position:absolute;top:12px;right:12px;">&times;</button>
+                <h3 style="margin-bottom:12px;">Selecciona tu ubicación</h3>
+                <div id="mapa-direccion" style="width:600px;height:500px;max-width:95vw;max-height:80vh;border-radius:8px;overflow:hidden;"></div>
+                <div style="margin-top:18px;text-align:center;">
+                    <button id="btn-usar-ubicacion" class="btn-finalizar-pedido">Usar esta dirección</button>
+                </div>
+            </div>
+        </div>
     `;
     totalDiv.innerHTML = `<strong>Total: S/ ${total.toFixed(2)}</strong>`;
     // Evento submit
@@ -451,37 +714,126 @@ function mostrarFormularioPago() {
     form.querySelector('.btn-cancelar-pago').onclick = function() {
         renderizarCarrito();
     };
-}
 
+    // Mapa: solo carga si se abre el modal
+    const btnAbrirMapa = document.getElementById('btn-abrir-mapa');
+    const modalMinimapa = document.getElementById('modal-minimapa');
+    let map, marker, selectedLatLng;
 
-function cambiarCantidadCarrito(idx, delta) {
-    let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
-    if (!carrito[idx]) return;
-    carrito[idx].cantidad += delta;
-    if (carrito[idx].cantidad < 1) {
-        // Si la cantidad es menor a 1, elimina el producto
-        carrito.splice(idx, 1);
+    btnAbrirMapa.onclick = function() {
+        modalMinimapa.style.display = 'flex';
+        // Cargar MapLibre GL JS solo una vez
+        if (!window.maplibregl) {
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.href = 'https://unpkg.com/maplibre-gl@3.6.1/dist/maplibre-gl.css';
+            document.head.appendChild(link);
+            const script = document.createElement('script');
+            script.src = 'https://unpkg.com/maplibre-gl@3.6.1/dist/maplibre-gl.js';
+            script.onload = inicializarMapa;
+            document.body.appendChild(script);
+        } else {
+            inicializarMapa();
+        }
+    };
+
+    function inicializarMapa() {
+        if (map) {
+            map.resize();
+            return;
+        }
+        // MapLibre GL JS con tiles de OpenStreetMap
+        map = new maplibregl.Map({
+            container: 'mapa-direccion',
+            style: 'https://tiles.stadiamaps.com/styles/osm_bright.json',
+            center: [-77.0151, -12.1894], // [lng, lat]
+            zoom: 15
+        });
+
+        marker = new maplibregl.Marker({draggable: true})
+            .setLngLat([-77.0151, -12.1894])
+            .addTo(map);
+
+        selectedLatLng = {lat: -12.1894, lng: -77.0151};
+
+        marker.on('dragend', function() {
+            const lngLat = marker.getLngLat();
+            selectedLatLng = {lat: lngLat.lat, lng: lngLat.lng};
+        });
+
+        map.on('click', function(e) {
+            marker.setLngLat(e.lngLat);
+            selectedLatLng = {lat: e.lngLat.lat, lng: e.lngLat.lng};
+        });
     }
-    localStorage.setItem('carrito', JSON.stringify(carrito));
-    actualizarContadorCarrito();
-    renderizarCarrito();
-    animarCarrito(); // <-- animación sutil bounce al cambiar cantidad
-}
 
-// Elimina un producto del carrito por índice y actualiza la UI
-function eliminarDelCarrito(idx) {
-    let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
-    carrito.splice(idx, 1);
-    localStorage.setItem('carrito', JSON.stringify(carrito));
-    actualizarContadorCarrito();
-    renderizarCarrito();
-    animarCarritoTemblo(); // <-- animación de temblor al eliminar
-}
+    document.getElementById('cerrar-minimapa').onclick = function() {
+        modalMinimapa.style.display = 'none';
+    };
 
-// Guarda el pedido en el historial en localStorage
-function guardarPedidoEnHistorial(pedido) {
-    let historial = JSON.parse(localStorage.getItem('historialPedidos')) || [];
-    historial.push(pedido);
-    localStorage.setItem('historialPedidos', JSON.stringify(historial));
+    document.getElementById('btn-usar-ubicacion').onclick = function() {
+        if (selectedLatLng) {
+            // Geocoding con Nominatim (OpenStreetMap)
+            const lat = selectedLatLng.lat;
+            const lng = selectedLatLng.lng;
+            const direccionInput = document.getElementById('input-direccion');
+            direccionInput.value = `Cargando dirección...`;
+            fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.display_name) {
+                        direccionInput.value = data.display_name;
+                    } else {
+                        direccionInput.value = `Ubicación: ${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+                    }
+                })
+                .catch(() => {
+                    direccionInput.value = `Ubicación: ${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+                });
+            modalMinimapa.style.display = 'none';
+        }
+    };
+
+    // Geocodificar dirección escrita y mostrar en el mapa solo si la encuentra (solo Perú)
+    const inputDireccion = document.getElementById('input-direccion');
+    inputDireccion.addEventListener('change', function() {
+        const direccion = inputDireccion.value.trim();
+        if (!direccion || !window.maplibregl || !map) return;
+        // Limita la búsqueda a Perú usando el parámetro countrycodes=pe
+        fetch(`https://nominatim.openstreetmap.org/search?format=json&countrycodes=pe&q=${encodeURIComponent(direccion)}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data && data.length > 0) {
+                    const lat = parseFloat(data[0].lat);
+                    const lon = parseFloat(data[0].lon);
+                    map.setCenter([lon, lat]);
+                    map.setZoom(16);
+                    marker.setLngLat([lon, lat]);
+                    selectedLatLng = {lat, lng: lon};
+                    // Quita mensaje de error si lo hubiera
+                    mostrarErrorMapa('');
+                } else {
+                    mostrarErrorMapa('No se encontró la dirección en el mapa.');
+                }
+            })
+            .catch(() => {
+                mostrarErrorMapa('Error al buscar la dirección.');
+            });
+    });
+
+    // Mostrar mensaje de error debajo del mapa si la dirección no se encuentra
+    function mostrarErrorMapa(msg) {
+        let errorDiv = document.getElementById('mapa-direccion-error');
+        if (!errorDiv) {
+            errorDiv = document.createElement('div');
+            errorDiv.id = 'mapa-direccion-error';
+            errorDiv.style.color = '#c0392b';
+            errorDiv.style.marginTop = '8px';
+            errorDiv.style.fontWeight = '500';
+            const contenedor = document.getElementById('contenedor-minimapa') || document.getElementById('mapa-direccion').parentNode;
+            contenedor.appendChild(errorDiv);
+        }
+        errorDiv.textContent = msg || '';
+    }
 }
 

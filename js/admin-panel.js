@@ -2,7 +2,8 @@
 
 document.addEventListener('DOMContentLoaded', function() {
     // Validar sesión antes de mostrar el panel
-    if (localStorage.getItem('bambino_admin_logged') !== 'true') {
+    const sesion = JSON.parse(localStorage.getItem('usuarioSesion'));
+    if (!sesion || (sesion.rol !== 'admin' && sesion.rol !== 'supervisor')) {
         window.location.href = 'login.html';
         return;
     }
@@ -11,8 +12,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if(option.textContent.includes('Cerrar Sesión')) {
             option.addEventListener('click', function(e) {
                 e.preventDefault();
-                // Eliminar flag de sesión
-                localStorage.removeItem('bambino_admin_logged');
+                // Eliminar sesión
+                localStorage.removeItem('usuarioSesion');
                 window.location.href = 'login.html';
             });
         }

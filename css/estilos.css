@@ -544,48 +544,55 @@ footer .foo-row .foo-col ul li a:hover{
 }
 .foo-col ul li a .fa-facebook-square {
   color: #1877f3;
-  transition: color 0.2s;
+  transition: color 0.2s, filter 0.2s;
 }
 .foo-col ul li a .fa-facebook-square:hover {
   color: #3b82ff;
+  filter: brightness(1.3);
 }
 .foo-col ul li a .fa-whatsapp-square {
   color: #25d366;
-  transition: color 0.2s;
+  transition: color 0.2s, filter 0.2s;
 }
 .foo-col ul li a .fa-whatsapp-square:hover {
   color: #4ffb7b;
+  filter: brightness(1.3);
 }
 .foo-col ul li a .fa-map-marker-alt {
   color: #e14b50;
-  transition: color 0.2s;
+  transition: color 0.2s, filter 0.2s;
 }
 .foo-col ul li a .fa-map-marker-alt:hover {
   color: #ff6f61;
+  filter: brightness(1.3);
 }
 .foo-col ul li a .fa-utensils {
   color: #ffb300;
-  transition: color 0.2s;
+  transition: color 0.2s, filter 0.2s;
 }
 .foo-col ul li a .fa-utensils:hover {
   color: #ffd54f;
+  filter: brightness(1.3);
 }
 .foo-col ul li a .fa-tags {
   color: #e14b50;
-  transition: color 0.2s;
+  transition: color 0.2s, filter 0.2s;
 }
 .foo-col ul li a .fa-tags:hover {
   color: #ff6f61;
+  filter: brightness(1.3);
 }
 .foo-col ul li a .fa-users {
   color: #6c63ff;
-  transition: color 0.2s;
+  transition: color 0.2s, filter 0.2s;
 }
 .foo-col ul li a .fa-users:hover {
   color: #a29bfe;
+  filter: brightness(1.3);
 }
 .foo-col ul li a:hover i {
   color: #ff5a5f;
+  filter: brightness(1.3);
 }
 
 

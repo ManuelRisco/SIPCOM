@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrar Usuarios - El Bambino</title>
+    <link rel="stylesheet" href="css/admin-panel.css">
+    <link rel="stylesheet" href="css/admin-usuarios.css">
+    <link rel="icon" type="image/webp" href="imagenes/logo/Logo.webp" />
+</head>
+<body>
+    <div class="admin-panel-container">
+        <div class="admin-header">
+            <img src="imagenes/logo/Logo.webp" alt="El Bambino - Pollos a la Brasa" class="admin-logo">
+            <h1>Administrar Usuarios</h1>
+        </div>
+
+        <!-- Login -->
+        <div id="login-section">
+            <h2>Iniciar Sesión</h2>
+            <form id="login-form">
+                <input type="text" id="login-usuario" placeholder="Usuario" required>
+                <input type="password" id="login-contrasena" placeholder="Contraseña" required>
+                <button type="submit">Ingresar</button>
+            </form>
+            <div id="login-msg" class="error"></div>
+        </div>
+
+        <!-- Panel de usuarios -->
+        <div id="usuarios-section" class="hidden">
+            <div class="fila-botones-superior">
+                <span id="bienvenida"></span>
+                <button id="cerrar-sesion">Cerrar Sesión</button>
+                <button id="btn-volver-lista" type="button">Volver</button>
+            </div>
+            <div id="admin-actions">
+                <h2>Agregar/Editar Usuario</h2>
+                <form id="usuario-form">
+                    <input type="hidden" id="usuario-id">
+                    <input type="text" id="nombreUsuario" placeholder="Usuario" required>
+                    <input type="password" id="contrasena" placeholder="Contraseña" required>
+                    <input type="text" id="nombres" placeholder="Nombres" required>
+                    <input type="text" id="apellidos" placeholder="Apellidos">
+                    <select id="rol" required>
+                        <option value="">Rol</option>
+                        <option value="admin">Admin</option>
+                        <option value="vendedor">Vendedor</option>
+                        <option value="supervisor">Supervisor</option>
+                    </select>
+                    <select id="estado" required>
+                        <option value="1">Activo</option>
+                        <option value="0">Inactivo</option>
+                    </select>
+                    <button type="submit">Guardar</button>
+                    <button type="button" id="cancelar-edicion" class="hidden">Cancelar</button>
+                </form>
+                <div id="form-msg"></div>
+            </div>
+            <h2>Lista de Usuarios</h2>
+            <table id="tabla-usuarios">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Usuario</th>
+                        <th>Nombres</th>
+                        <th>Apellidos</th>
+                        <th>Rol</th>
+                        <th>Estado</th>
+                        <th>Fecha Registro</th>
+                        <th class="actions">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+    <!-- Verifica sesión antes de cargar scripts principales -->
+    <script>
+        // Si ya hay usuario logueado, muestra el panel de usuarios directamente
+        document.addEventListener('DOMContentLoaded', function() {
+            const usuario = localStorage.getItem('usuario');
+            if (usuario) {
+                document.getElementById('login-section').classList.add('hidden');
+                document.getElementById('usuarios-section').classList.remove('hidden');
+                // Opcional: muestra el nombre de usuario en bienvenida
+                document.getElementById('bienvenida').textContent = 'Bienvenido, ' + usuario;
+            }
+            // Botón volver (lista de usuarios)
+            const btnVolverLista = document.getElementById('btn-volver-lista');
+            if (btnVolverLista) {
+                btnVolverLista.onclick = function() {
+                    window.location.href = 'admin-panel.html';
+                };
+            }
+        });
+    </script>
+    <script src="js/admin-usuarios.js"></script>
+    <script src="js/login.js"></script>
+</body>
+</html>
