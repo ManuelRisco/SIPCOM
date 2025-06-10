@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
             loginSuccess.style.display = 'block';
             setTimeout(() => {
                 window.location.href = 'admin-panel.html';
-            }, 1200);
+            }, 400);
         } else {
             loginError.textContent = 'Usuario o contraseña incorrectos.';
             loginError.style.display = 'block';
