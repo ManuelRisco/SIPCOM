@@ -441,6 +441,29 @@ function mostrarFormularioPago() {
         }
         errorDiv.textContent = msg || '';
     }
+
+    // --- Ajuste de estilo para el minimapa en móviles ---
+    if (!document.getElementById('minimapa-mobile-style')) {
+        const style = document.createElement('style');
+        style.id = 'minimapa-mobile-style';
+        style.innerHTML = `
+        @media (max-width: 600px) {
+            #modal-minimapa > div {
+                left: 2vw !important;
+                right: 2vw !important;
+                margin: 0 auto !important;
+                max-width: 96vw !important;
+                min-width: 0 !important;
+            }
+            #mapa-direccion {
+                width: 90vw !important;
+                min-width: 0 !important;
+                max-width: 96vw !important;
+            }
+        }
+        `;
+        document.head.appendChild(style);
+    }
 }
 
 /*=========================================

@@ -146,27 +146,173 @@
 .hidden {
     display: none !important;
 }
+/* ...existing code... */
+
+/* Responsive diseño similar a admin-usuarios.css */
 @media (max-width: 900px) {
     .admin-panel-container {
-        max-width: 99vw;
-        padding: 1em;
+        width: 90vw;
+        min-width: 0;
+        padding: 0 2vw;
+        padding-top: 1em;
+        padding-bottom: 1em;
+    }
+    #proveedores-section {
+        padding: 0 2vw;
+    }
+    .admin-header h1 {
+        font-size: 1.5rem;
+        margin-bottom: 0.7em;
+    }
+    .admin-header {
+        margin-bottom: 1em;
+    }
+    .fila-botones-superior {
+        flex-direction: column;
+        gap: 8px;
+        align-items: flex-start;
+        margin-bottom: 1em;
+    }
+    #admin-actions-proveedores {
+        padding: 8px 0;
+        margin-bottom: 1em;
     }
     #proveedor-form input,
-    #proveedor-form select {
-        flex: 1 1 100%;
-    }
-}
-@media (max-width: 600px) {
-    .admin-panel-container {
-        padding: 0.5em;
+    #proveedor-form select,
+    #proveedor-form button {
+        font-size: 1rem;
+        width: 100%;
+        margin-bottom: 8px;
+        min-width: 0;
+        box-sizing: border-box;
     }
     #proveedor-form {
+        display: flex;
         flex-direction: column;
-        gap: 0.5em;
+        gap: 0;
+    }
+    #tabla-proveedores {
+        font-size: 0.95rem;
+        width: 100%;
+        min-width: 600px;
+        overflow-x: auto;
+        display: block;
+    }
+    #tabla-proveedores thead,
+    #tabla-proveedores tbody,
+    #tabla-proveedores tr {
+        display: table;
+        width: 100%;
+        table-layout: fixed;
+    }
+}
+
+@media (max-width: 650px) {
+    .admin-header h1 {
+        font-size: 1.1rem;
+    }
+    #tabla-proveedores {
+        min-width: 400px;
+        font-size: 0.9rem;
+    }
+    #proveedores-section {
+        padding: 0 1vw;
+    }
+}
+
+@media (max-width: 500px) {
+    .admin-panel-container {
+        padding: 0 1vw;
+    }
+    #proveedores-section {
+        padding: 0 1vw;
+    }
+    #tabla-proveedores {
+        min-width: 320px;
+        font-size: 0.85rem;
+    }
+    .admin-header img.admin-logo {
+        width: 48px;
+        height: 48px;
+    }
+    .fila-botones-superior button,
+    #cerrar-sesion-proveedores,
+    #btn-volver-panel {
+        font-size: 0.95rem;
+        padding: 6px 10px;
+    }
+}
+
+/* Responsive tabla de proveedores */
+@media (max-width: 900px) {
+    #tabla-proveedores {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        min-width: 600px;
+        font-size: 0.95rem;
+    }
+    #tabla-proveedores thead,
+    #tabla-proveedores tbody,
+    #tabla-proveedores tr {
+        display: table;
+        width: 100%;
+        table-layout: fixed;
+    }
+}
+
+@media (max-width: 650px) {
+    #tabla-proveedores {
+        min-width: 400px;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 500px) {
+    #tabla-proveedores {
+        min-width: 320px;
+        font-size: 0.85rem;
     }
     #tabla-proveedores th,
     #tabla-proveedores td {
-        font-size: 0.95em;
         padding: 0.5em 0.3em;
+        font-size: 0.85em;
+    }
+}
+
+/* Tabla tipo "cards" en móviles muy pequeños */
+@media (max-width: 900px) {
+    #tabla-proveedores,
+    #tabla-proveedores thead,
+    #tabla-proveedores tbody,
+    #tabla-proveedores tr,
+    #tabla-proveedores th,
+    #tabla-proveedores td {
+        display: block;
+        width: 100%;
+    }
+    #tabla-proveedores thead {
+        display: none;
+    }
+    #tabla-proveedores tr {
+        margin-bottom: 1em;
+        border: 1px solid #eee;
+        border-radius: 8px;
+        background: #fafafa;
+        box-shadow: 0 1px 4px #0001;
+        padding: 0.5em 0.7em;
+    }
+    #tabla-proveedores td {
+        border: none;
+        padding: 0.4em 0.2em;
+        position: relative;
+    }
+    #tabla-proveedores td:before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: #d2691e;
+        display: block;
+        margin-bottom: 2px;
+        font-size: 0.95em;
     }
 }

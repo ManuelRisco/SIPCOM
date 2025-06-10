@@ -17,18 +17,40 @@ function cerrarSesion() {
     localStorage.removeItem('usuario');
 }
 
-// Inicializar con un admin si no hay usuarios
+// Inicializar con un admin, supervisor y vendedor si no hay usuarios
 if (!localStorage.getItem('usuarios')) {
-    guardarUsuarios([{
-        idUsuario: 1,
-        nombreUsuario: 'admin',
-        contrasena: 'admin123',
-        nombres: 'Administrador',
-        apellidos: '',
-        rol: 'admin',
-        estado: 1,
-        fechaRegistro: new Date().toISOString()
-    }]);
+    guardarUsuarios([
+        {
+            idUsuario: 1,
+            nombreUsuario: 'admin',
+            contrasena: 'admin123',
+            nombres: 'Administrador',
+            apellidos: '',
+            rol: 'admin',
+            estado: 1,
+            fechaRegistro: new Date().toISOString()
+        },
+        {
+            idUsuario: 2,
+            nombreUsuario: 'supervisor',
+            contrasena: 'super123',
+            nombres: 'Supervisor',
+            apellidos: '',
+            rol: 'supervisor',
+            estado: 1,
+            fechaRegistro: new Date().toISOString()
+        },
+        {
+            idUsuario: 3,
+            nombreUsuario: 'vendedor',
+            contrasena: 'vende123',
+            nombres: 'Vendedor',
+            apellidos: '',
+            rol: 'vendedor',
+            estado: 1,
+            fechaRegistro: new Date().toISOString()
+        }
+    ]);
 }
 
 // LOGIN
@@ -87,11 +109,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// REGISTRO Y CRUD DE USUARIOS (solo para admin/supervisor)
+// REGISTRO Y CRUD DE USUARIOS (solo para admin)
 window.registrarUsuario = function(datos) {
     const sesion = obtenerSesion();
-    if (!sesion || (sesion.rol !== 'admin' && sesion.rol !== 'supervisor')) {
-        alert('No tienes permisos para registrar usuarios.');
+    if (!sesion || sesion.rol !== 'admin') {
+        alert('Solo el administrador puede registrar usuarios.');
         return false;
     }
     let usuarios = obtenerUsuarios();
@@ -116,8 +138,8 @@ window.registrarUsuario = function(datos) {
 
 window.editarUsuario = function(id, datos) {
     const sesion = obtenerSesion();
-    if (!sesion || (sesion.rol !== 'admin' && sesion.rol !== 'supervisor')) {
-        alert('No tienes permisos para editar usuarios.');
+    if (!sesion || sesion.rol !== 'admin') {
+        alert('Solo el administrador puede editar usuarios.');
         return false;
     }
     let usuarios = obtenerUsuarios();
@@ -133,8 +155,8 @@ window.editarUsuario = function(id, datos) {
 
 window.eliminarUsuario = function(id) {
     const sesion = obtenerSesion();
-    if (!sesion || (sesion.rol !== 'admin' && sesion.rol !== 'supervisor')) {
-        alert('No tienes permisos para eliminar usuarios.');
+    if (!sesion || sesion.rol !== 'admin') {
+        alert('Solo el administrador puede eliminar usuarios.');
         return false;
     }
     let usuarios = obtenerUsuarios();
@@ -146,5 +168,16 @@ window.eliminarUsuario = function(id) {
 // Cerrar sesión global
 window.cerrarSesionGlobal = function() {
     cerrarSesion();
-    window.location.href = "index.html";
+    window.location.href = "login.html";
 };
+
+// Asignar a todos los botones con id o clase 'cerrar-sesion'
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('#cerrar-sesion, .cerrar-sesion').forEach(btn => {
+        btn.onclick = function(e) {
+            e.preventDefault();
+            cerrarSesion();
+            window.location.href = "login.html";
+        };
+    });
+});

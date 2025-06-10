@@ -17,21 +17,17 @@
             <h1>Panel de Administración</h1>
         </div>
         <div class="admin-options">
-            <a href="proveedores.html" class="admin-option">
+            <a href="admin-proveedores.html" class="admin-option admin-proveedores">
                 <i class="las la-box"></i>
                 <span>Adminstrar proveedores</span>
             </a>
-            <a href="admin-usuarios.html" class="admin-option">
+            <a href="admin-usuarios.html" class="admin-option admin-usuarios">
                 <i class="las la-clipboard-list"></i>
                 <span>Administrar usuarios</span>
             </a>
-            <a href="proveedores.html" class="admin-option">
-                <i class="las la-users-cog"></i>
-                <span>Proveedores</span>
-            </a>
-            <a href="promociones.html" class="admin-option">
+            <a href="pedidos.html" class="admin-option">
                 <i class="las la-percentage"></i>
-                <span>Promociones</span>
+                <span>Pedidos   </span>
             </a>
             <a href="#" id="cerrar-sesion" class="admin-option">
                 <i class="las la-sign-out-alt"></i>
@@ -53,12 +49,19 @@
             localStorage.setItem('loginMsg', 'Usuario inactivo. Contacte al administrador.');
             window.location.href = "login.html";
         }
-        // Cerrar sesión
-        document.getElementById('cerrar-sesion').onclick = function(e) {
-            e.preventDefault();
-            localStorage.removeItem('usuarioSesion');
-            window.location.href = "index.html";
-        };
+        // Ocultar opciones para vendedor
+        if (sesion && sesion.rol === 'vendedor') {
+            document.querySelectorAll('.admin-proveedores, .admin-usuarios').forEach(el => el.style.display = 'none');
+        }
+        // Cerrar sesión (redirige a login.html y limpia sesión)
+        document.querySelectorAll('#cerrar-sesion, .cerrar-sesion').forEach(btn => {
+            btn.onclick = function(e) {
+                e.preventDefault();
+                localStorage.removeItem('usuarioSesion');
+                localStorage.removeItem('usuario');
+                window.location.href = "login.html";
+            };
+        });
     </script>
 </body>
 </html>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pedidos - El Bambino</title>
+    <link rel="stylesheet" href="css/admin-panel.css" />
+    <link rel="stylesheet" href="css/admin-panel-custom.css" />
+    <link rel="stylesheet" href="css/pedidos-admin.css" />
+    <link rel="icon" type="image/webp" href="imagenes/logo/Logo.webp" />
+    <link rel="stylesheet"
+        href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css" />
+</head>
+<body>
+    <div class="admin-panel-container">
+        <div class="admin-header">
+            <img src="imagenes/logo/Logo.webp" alt="El Bambino - Pollos a la Brasa" class="admin-logo">
+            <h1>Pedidos</h1>
+        </div>
+        <div class="fila-botones-superior" style="display:flex;justify-content:flex-end;align-items:center;gap:12px;margin-bottom:1.5em;">
+            <button id="cerrar-sesion" class="admin-btn">Cerrar Sesión</button>
+            <button id="btn-volver-panel" class="admin-btn" type="button">Volver</button>
+        </div>
+        <div class="admin-content">
+            <div class="admin-table-container">
+                <table class="admin-table" id="tabla-pedidos">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Fecha</th>
+                            <th>Cliente</th>
+                            <th>Documento</th>
+                            <th>Teléfono</th>
+                            <th>Dirección</th>
+                            <th>Método Pago</th>
+                            <th>Total</th>
+                            <th>Detalle</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Pedidos se llenan por JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal detalle pedido -->
+    <div id="modal-detalle-pedido" class="admin-modal" style="display:none;">
+        <div class="admin-modal-content">
+            <span class="admin-modal-close" id="cerrar-modal-detalle">&times;</span>
+            <h2>Detalle del Pedido</h2>
+            <div id="detalle-pedido-contenido"></div>
+        </div>
+    </div>
+
+    <script>
+    // Permitir acceso solo a admin, supervisor y vendedor
+    const sesion = JSON.parse(localStorage.getItem('usuarioSesion'));
+    if (!sesion || sesion.estado === 0 || (sesion.rol !== 'admin' && sesion.rol !== 'supervisor' && sesion.rol !== 'vendedor')) {
+        localStorage.removeItem('usuarioSesion');
+        localStorage.removeItem('usuario');
+        localStorage.setItem('loginMsg', 'Usuario inactivo. Contacte al administrador.');
+        window.location.href = "login.html";
+    }
+
+    // Renderizar tabla de pedidos
+    function renderizarPedidos() {
+        const tbody = document.querySelector('#tabla-pedidos tbody');
+        tbody.innerHTML = '';
+        const pedidos = JSON.parse(localStorage.getItem('historialPedidos')) || [];
+        pedidos.forEach((pedido, idx) => {
+            const cliente = (pedido.nombres || '') + ' ' + (pedido.apellidos || '');
+            const doc = (pedido.tipoDocumento || '') + ' ' + (pedido.numeroDocumento || '');
+            const telefono = pedido.telefono || '';
+            const direccion = pedido.direccion || '';
+            const metodoPago = pedido.metodoPago || '';
+            const total = pedido.total ? `S/ ${Number(pedido.total).toFixed(2)}` : '';
+            const fecha = pedido.fecha || '';
+            tbody.innerHTML += `
+                <tr>
+                    <td>${idx + 1}</td>
+                    <td>${fecha}</td>
+                    <td>${cliente.trim()}</td>
+                    <td>${doc}</td>
+                    <td>${telefono}</td>
+                    <td>${direccion}</td>
+                    <td>${metodoPago}</td>
+                    <td>${total}</td>
+                    <td>
+                        <button class="admin-btn btn-detalle-pedido" data-idx="${idx}"><i class="las la-eye"></i></button>
+                    </td>
+                </tr>
+            `;
+        });
+    }
+
+    // Modal detalle
+    const modal = document.getElementById('modal-detalle-pedido');
+    const cerrarModal = document.getElementById('cerrar-modal-detalle');
+    cerrarModal.onclick = function() {
+        modal.style.display = 'none';
+    };
+
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.btn-detalle-pedido')) {
+            const idx = e.target.closest('.btn-detalle-pedido').dataset.idx;
+            mostrarDetallePedido(idx);
+        }
+    });
+
+    function mostrarDetallePedido(idx) {
+        const pedidos = JSON.parse(localStorage.getItem('historialPedidos')) || [];
+        const pedido = pedidos[idx];
+        if (!pedido) return;
+        let html = `
+            <div><strong>Fecha:</strong> ${pedido.fecha || ''}</div>
+            <div><strong>Cliente:</strong> ${(pedido.nombres || '') + ' ' + (pedido.apellidos || '')}</div>
+            <div><strong>Documento:</strong> ${(pedido.tipoDocumento || '') + ' ' + (pedido.numeroDocumento || '')}</div>
+            <div><strong>Teléfono:</strong> ${pedido.telefono || ''}</div>
+            <div><strong>Dirección:</strong> ${pedido.direccion || ''}</div>
+            <div><strong>Método de Pago:</strong> ${pedido.metodoPago || ''}</div>
+            <div><strong>Total:</strong> S/ ${Number(pedido.total).toFixed(2)}</div>
+            <div style="margin-top:10px;"><strong>Productos:</strong>
+                <ul style="margin:0 0 0 18px;padding:0;">
+                    ${pedido.items.map(item => {
+                        const precioNum = parseFloat(item.precio.replace(/[^\d.]/g, '')) || 0;
+                        const subtotal = precioNum * item.cantidad;
+                        return `<li>${item.cantidad} x ${item.nombre} <span style='color:#888;'>= S/ ${subtotal.toFixed(2)}</span></li>`;
+                    }).join('')}
+                </ul>
+            </div>
+            ${pedido.comentario ? `<div style="margin-top:10px;"><strong>Comentario:</strong> ${pedido.comentario}</div>` : ''}
+        `;
+        document.getElementById('detalle-pedido-contenido').innerHTML = html;
+        modal.style.display = 'flex';
+    }
+
+    // Inicializar
+    renderizarPedidos();
+
+    // Cerrar sesión (igual que en admin-panel)
+    document.querySelectorAll('#cerrar-sesion, .cerrar-sesion').forEach(btn => {
+        btn.onclick = function(e) {
+            e.preventDefault();
+            localStorage.removeItem('usuarioSesion');
+            localStorage.removeItem('usuario');
+            window.location.href = "login.html";
+        };
+    });
+
+    // Botón cerrar sesión y volver
+    document.getElementById('cerrar-sesion').onclick = function(e) {
+        e.preventDefault();
+        localStorage.removeItem('usuarioSesion');
+        localStorage.removeItem('usuario');
+        window.location.href = "login.html";
+    };
+    document.getElementById('btn-volver-panel').onclick = function() {
+        window.location.href = "admin-panel.html";
+    };
+    </script>
+</body>
+</html>

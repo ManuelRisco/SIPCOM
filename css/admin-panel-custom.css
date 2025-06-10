@@ -1,4 +1,4 @@
-.admin-panel-container { max-width: 600px; margin: 40px auto; background: #fff; border-radius: 10px; box-shadow: 0 2px 8px #0002; padding: 2em; }
+.admin-panel-container { max-width: 800px; margin: 40px auto; background: #fff; border-radius: 10px; box-shadow: 0 2px 8px #0002; padding: 2em; }
 .admin-header { text-align: center; margin-bottom: 2em; }
 .admin-logo { width: 80px; margin-bottom: 10px; }
 .admin-options { display: flex; flex-direction: column; gap: 1em; }
