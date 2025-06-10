@@ -485,6 +485,3 @@ function guardarPedidoEnHistorial(pedido) {
     localStorage.setItem('historialPedidos', JSON.stringify(historial));
 }
 
-// === BUSCADOR DE CARTA ===
-// Código movido a busqueda.js
-

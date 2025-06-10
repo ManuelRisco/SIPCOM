@@ -535,6 +535,59 @@ footer .foo-row .foo-col ul li a:hover{
     text-decoration: underline;
 }
 
+.foo-col ul li a i {
+  font-size: 1.35em;
+  vertical-align: middle;
+  margin-right: 7px;
+  color: #222;
+  transition: color 0.2s;
+}
+.foo-col ul li a .fa-facebook-square {
+  color: #1877f3;
+  transition: color 0.2s;
+}
+.foo-col ul li a .fa-facebook-square:hover {
+  color: #3b82ff;
+}
+.foo-col ul li a .fa-whatsapp-square {
+  color: #25d366;
+  transition: color 0.2s;
+}
+.foo-col ul li a .fa-whatsapp-square:hover {
+  color: #4ffb7b;
+}
+.foo-col ul li a .fa-map-marker-alt {
+  color: #e14b50;
+  transition: color 0.2s;
+}
+.foo-col ul li a .fa-map-marker-alt:hover {
+  color: #ff6f61;
+}
+.foo-col ul li a .fa-utensils {
+  color: #ffb300;
+  transition: color 0.2s;
+}
+.foo-col ul li a .fa-utensils:hover {
+  color: #ffd54f;
+}
+.foo-col ul li a .fa-tags {
+  color: #e14b50;
+  transition: color 0.2s;
+}
+.foo-col ul li a .fa-tags:hover {
+  color: #ff6f61;
+}
+.foo-col ul li a .fa-users {
+  color: #6c63ff;
+  transition: color 0.2s;
+}
+.foo-col ul li a .fa-users:hover {
+  color: #a29bfe;
+}
+.foo-col ul li a:hover i {
+  color: #ff5a5f;
+}
+
 
 .foo-copy{
     background: #000000;
@@ -713,4 +766,57 @@ footer .foo-row .foo-col ul li a:hover{
 .sobre-nosotros-descripcion {
     font-size: 1.10rem;
 }
+}
+
+.buscador-carta {
+    max-width: 400px;
+    margin: 32px auto 24px auto;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.buscador-carta input {
+    flex: 1;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 1.1rem;
+}
+.buscador-carta i {
+    color: #1a237e;
+    font-size: 1.3rem;
+}
+
+#modal-newsletter.modal-carrito-content {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 3000;
+    min-width: 420px;
+    max-width: 98vw;
+    padding: 48px 32px;
+    text-align: center;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.18);
+    border-radius: 22px;
+}
+#cerrar-modal-newsletter {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: none;
+    border: none;
+    font-size: 2.2rem;
+    cursor: pointer;
+    color: #1a237e;
+}
+#modal-newsletter h2 {
+    color: #1a237e;
+    margin-bottom: 22px;
+    font-size: 2.1rem;
+}
+#modal-newsletter p {
+    font-size: 1.18rem;
+    color: #333;
 }
