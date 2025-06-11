@@ -1,13 +1,14 @@
 // js/menu-scroll.js
 // Función de scroll suave con offset
 function scrollConOffset(elemento, offset = 80) {
-    const y = elemento.getBoundingClientRect().top + window.pageYOffset - offset;
+    // Usa un offset mayor para subir más (por ejemplo, 120)
+    const y = elemento.getBoundingClientRect().top + window.pageYOffset - (offset + 40);
     window.scrollTo({ top: y, behavior: 'smooth' });
 }
 
 // Scroll suave para enlaces del navbar y footer
-if (document.querySelectorAll('.footer-link-menu, .footer-link-promociones').length) {
-    document.querySelectorAll('.footer-link-menu, .footer-link-promociones').forEach(function(link) {
+if (document.querySelectorAll('.footer-link-menu, .footer-link-promociones, .footer-link-nosotros').length) {
+    document.querySelectorAll('.footer-link-menu, .footer-link-promociones, .footer-link-nosotros').forEach(function(link) {
         link.addEventListener('click', function(e) {
             e.preventDefault();
             var tab = link.dataset.tab;
@@ -29,6 +30,7 @@ if (document.querySelectorAll('.footer-link-menu, .footer-link-promociones').len
                     }
                 });
             }
+            // Si es Nosotros, solo hace scroll
             var href = link.getAttribute('href');
             if (href && href.startsWith('#')) {
                 var target = document.querySelector(href);
@@ -48,8 +50,7 @@ if (document.querySelectorAll('.header-menu-movil a').length) {
             var cerrarMenu = function() {
                 document.querySelector('.header-menu-movil').classList.remove('active');
             };
-            // Offset mayor para header móvil (puedes ajustar el valor si tu header es más grande)
-            var offsetMovil = 150;
+            var offsetMovil = 80;
             if (text === 'Carta') {
                 e.preventDefault();
                 cerrarMenu();
@@ -73,6 +74,13 @@ if (document.querySelectorAll('.header-menu-movil a').length) {
                     }
                 });
                 var target = document.querySelector('#carta');
+                if (target) {
+                    scrollConOffset(target, offsetMovil);
+                }
+            } else if (text === 'Nosotros') {
+                e.preventDefault();
+                cerrarMenu();
+                var target = document.querySelector('#sobre-nosotros');
                 if (target) {
                     scrollConOffset(target, offsetMovil);
                 }

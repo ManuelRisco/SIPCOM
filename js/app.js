@@ -164,6 +164,48 @@ function cerrarModalCarrito() {
     document.getElementById('modal-carrito').style.display = 'none';
 }
 
+// Disminuir cantidad de un producto en el carrito
+function disminuirCantidadCarrito(idx) {
+    let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+    if (carrito[idx]) {
+        carrito[idx].cantidad -= 1;
+        if (carrito[idx].cantidad <= 0) {
+            carrito.splice(idx, 1);
+            localStorage.setItem('carrito', JSON.stringify(carrito));
+            actualizarContadorCarrito();
+            renderizarCarrito();
+            animarCarritoTemblo(); // animación de temblor al eliminar todo
+            return;
+        }
+        localStorage.setItem('carrito', JSON.stringify(carrito));
+        actualizarContadorCarrito();
+        renderizarCarrito();
+        animarCarrito(); // animación normal al disminuir
+    }
+}
+
+// Aumentar cantidad de un producto en el carrito
+function aumentarCantidadCarrito(idx) {
+    let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+    if (carrito[idx]) {
+        carrito[idx].cantidad += 1;
+        localStorage.setItem('carrito', JSON.stringify(carrito));
+        actualizarContadorCarrito();
+        renderizarCarrito();
+        animarCarrito(); // animación normal al aumentar
+    }
+}
+
+// Eliminar completamente un producto del carrito
+function eliminarDelCarrito(idx) {
+    let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+    carrito.splice(idx, 1);
+    localStorage.setItem('carrito', JSON.stringify(carrito));
+    actualizarContadorCarrito();
+    renderizarCarrito();
+    animarCarritoTemblo(); // animación de temblor al eliminar todo
+}
+
 function renderizarCarrito() {
     const carrito = JSON.parse(localStorage.getItem('carrito')) || [];
     const lista = document.querySelector('#modal-carrito .carrito-lista');
@@ -211,9 +253,9 @@ function renderizarCarrito() {
             btn._cantidadHandler = function() {
                 const idx = parseInt(btn.getAttribute('data-idx'));
                 if (btn.classList.contains('mas')) {
-                    cambiarCantidadCarrito(idx, 1);
+                    aumentarCantidadCarrito(idx);
                 } else {
-                    cambiarCantidadCarrito(idx, -1);
+                    disminuirCantidadCarrito(idx);
                 }
             };
             btn.addEventListener('click', btn._cantidadHandler);
@@ -595,6 +637,48 @@ function cerrarModalCarrito() {
     document.getElementById('modal-carrito').style.display = 'none';
 }
 
+// Disminuir cantidad de un producto en el carrito
+function disminuirCantidadCarrito(idx) {
+    let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+    if (carrito[idx]) {
+        carrito[idx].cantidad -= 1;
+        if (carrito[idx].cantidad <= 0) {
+            carrito.splice(idx, 1);
+            localStorage.setItem('carrito', JSON.stringify(carrito));
+            actualizarContadorCarrito();
+            renderizarCarrito();
+            animarCarritoTemblo(); // animación de temblor al eliminar todo
+            return;
+        }
+        localStorage.setItem('carrito', JSON.stringify(carrito));
+        actualizarContadorCarrito();
+        renderizarCarrito();
+        animarCarrito(); // animación normal al disminuir
+    }
+}
+
+// Aumentar cantidad de un producto en el carrito
+function aumentarCantidadCarrito(idx) {
+    let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+    if (carrito[idx]) {
+        carrito[idx].cantidad += 1;
+        localStorage.setItem('carrito', JSON.stringify(carrito));
+        actualizarContadorCarrito();
+        renderizarCarrito();
+        animarCarrito(); // animación normal al aumentar
+    }
+}
+
+// Eliminar completamente un producto del carrito
+function eliminarDelCarrito(idx) {
+    let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+    carrito.splice(idx, 1);
+    localStorage.setItem('carrito', JSON.stringify(carrito));
+    actualizarContadorCarrito();
+    renderizarCarrito();
+    animarCarritoTemblo(); // animación de temblor al eliminar todo
+}
+
 function renderizarCarrito() {
     const carrito = JSON.parse(localStorage.getItem('carrito')) || [];
     const lista = document.querySelector('#modal-carrito .carrito-lista');
@@ -642,9 +726,9 @@ function renderizarCarrito() {
             btn._cantidadHandler = function() {
                 const idx = parseInt(btn.getAttribute('data-idx'));
                 if (btn.classList.contains('mas')) {
-                    cambiarCantidadCarrito(idx, 1);
+                    aumentarCantidadCarrito(idx);
                 } else {
-                    cambiarCantidadCarrito(idx, -1);
+                    disminuirCantidadCarrito(idx);
                 }
             };
             btn.addEventListener('click', btn._cantidadHandler);

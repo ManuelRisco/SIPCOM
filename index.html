@@ -28,6 +28,7 @@
     <link rel="stylesheet" href="css/carrito-estilo.css" />
     <link rel="stylesheet" href="css/carrito-mapa.css" />
     <link rel="stylesheet" href="css/carrito-mapa-responsive.css" />
+    <link rel="stylesheet" href="css/carrusel.css">
 </head>
 
 <body>
@@ -86,13 +87,29 @@
         </div>
 
         <!-- =================================
-           BANNER
+           CARRUSEL
         ================================== -->
-        <div class="hm-banner">
-            <div class="img-banner">
-                <img src="imagenes/fondo/fondo.webp" alt="fondo" />
+
+        <div class="slider-box">
+            <button class="arrow prev">&#10094;</button>
+            <ul>
+                <li><img src="imagenes/carrusel/imagen_1.webp" alt="Imagen 1"></li>
+                <li><img src="imagenes/carrusel/imagen_2.webp" alt="Imagen 2"></li>
+                <li><img src="imagenes/carrusel/imagen_3.webp" alt="Imagen 3"></li>
+                <li><img src="imagenes/carrusel/imagen_4.webp" alt="Imagen 4"></li>
+            </ul>
+            <button class="arrow next">&#10095;</button>
+
+            <!-- Contenedor de bolitas -->
+            <div class="dots">
+                <span class="dot active" data-index="0"></span>
+                <span class="dot" data-index="1"></span>
+                <span class="dot" data-index="2"></span>
+                <span class="dot" data-index="3"></span>
             </div>
         </div>
+
+
 
         <!-- =================================
            HOME CATEGROIAS
@@ -146,7 +163,7 @@
                     <div class="grid-product">
                         <div class="product-item">
                             <div class="p-portada">
-                                    <img alt="Pollo entero" src="imagenes/carta/pollo_brasa/pollo_entero_1_papa.webp" />
+                                <img alt="Pollo entero" src="imagenes/carta/pollo_brasa/pollo_entero_1_papa.webp" />
                                 <span class="stin stin-new">Recomendado</span>
                             </div>
                             <div class="p-info">
@@ -163,8 +180,8 @@
                         </div>
                         <div class="product-item">
                             <div class="p-portada">
-                                    <img alt="Medio Pollo + Un Cuarto"
-                                        src="imagenes/carta/pollo_brasa/medio_pollo_mas_un_cuarto.webp" />
+                                <img alt="Medio Pollo + Un Cuarto"
+                                    src="imagenes/carta/pollo_brasa/medio_pollo_mas_un_cuarto.webp" />
                             </div>
                             <div class="p-info">
                                 <h3>Medio Pollo + Un Cuarto</h3>
@@ -180,7 +197,7 @@
                         </div>
                         <div class="product-item">
                             <div class="p-portada">
-                                    <img alt="Medio Pollo" src="imagenes/carta/pollo_brasa/medio_pollo.webp" />
+                                <img alt="Medio Pollo" src="imagenes/carta/pollo_brasa/medio_pollo.webp" />
                             </div>
                             <div class="p-info">
                                 <h3>Medio Pollo a la Brasa</h3>
@@ -196,8 +213,8 @@
                         </div>
                         <div class="product-item">
                             <div class="p-portada">
-                                    <img alt="Medio Pollo + Un Cuarto"
-                                        src="imagenes/carta/pollo_brasa/pollo_entero_2_papas.webp" />
+                                <img alt="Medio Pollo + Un Cuarto"
+                                    src="imagenes/carta/pollo_brasa/pollo_entero_2_papas.webp" />
                             </div>
                             <div class="p-info">
                                 <h3>Pollo Entero sin Ensalada</h3>
@@ -213,8 +230,7 @@
                         </div>
                         <div class="product-item">
                             <div class="p-portada">
-                                    <img alt="Cuarto de Pollo"
-                                        src="imagenes/carta/pollo_brasa/pollo_parte_pecho.webp" />
+                                <img alt="Cuarto de Pollo" src="imagenes/carta/pollo_brasa/pollo_parte_pecho.webp" />
                             </div>
                             <div class="p-info">
                                 <h3>Cuarto de Pollo a la Brasa</h3>
@@ -230,8 +246,7 @@
                         </div>
                         <div class="product-item">
                             <div class="p-portada">
-                                    <img alt="Pollo Personal"
-                                        src="imagenes/carta/pollo_brasa/pollo_parte_pierna.webp" />
+                                <img alt="Pollo Personal" src="imagenes/carta/pollo_brasa/pollo_parte_pierna.webp" />
                                 <span class="stin stin-new">Nuevo</span>
                             </div>
                             <div class="p-info">
@@ -254,8 +269,8 @@
                     <div class="grid-product">
                         <div class="product-item">
                             <div class="p-portada">
-                                    <img src="imagenes/carta/adicionales/una_porcion_papas_fritas.webp"
-                                        alt="Una porcion Papas Fritas" />
+                                <img src="imagenes/carta/adicionales/una_porcion_papas_fritas.webp"
+                                    alt="Una porcion Papas Fritas" />
                                 <span class="stin stin-new">Recomendado</span>
                             </div>
 
@@ -274,8 +289,8 @@
 
                         <div class="product-item">
                             <div class="p-portada">
-                                    <img src="imagenes/carta/adicionales/media_racion_papas_fritas.webp"
-                                        alt="Media Ración de Papas Fritas" />
+                                <img src="imagenes/carta/adicionales/media_racion_papas_fritas.webp"
+                                    alt="Media Ración de Papas Fritas" />
                             </div>
 
                             <div class="p-info">
@@ -293,7 +308,7 @@
 
                         <div class="product-item">
                             <div class="p-portada">
-                                    <img src="imagenes/carta/adicionales/arroz-chaufa.webp" alt="Arroz Chaufa" />
+                                <img src="imagenes/carta/adicionales/arroz-chaufa.webp" alt="Arroz Chaufa" />
                             </div>
 
                             <div class="p-info">
@@ -316,8 +331,7 @@
                     <div class="grid-product">
                         <div class="product-item">
                             <div class="p-portada">
-                                    <img src="imagenes/carta/promociones/dos_pollos_promo.webp"
-                                        alt="Dos pollos promo" />
+                                <img src="imagenes/carta/promociones/dos_pollos_promo.webp" alt="Dos pollos promo" />
                                 <span class="stin stin-oferta">Promo</span>
                             </div>
 
@@ -338,7 +352,7 @@
 
                         <div class="product-item">
                             <div class="p-portada">
-                                    <img src="imagenes/carta/promociones/un_pollo_promo.webp" alt="Dos pollos promo" />
+                                <img src="imagenes/carta/promociones/un_pollo_promo.webp" alt="Dos pollos promo" />
                                 <span class="stin stin-oferta">Promo</span>
                             </div>
 
@@ -476,22 +490,42 @@
 
                     <div class="foo-col">
                         <ul>
-                            <li><a href="#carta" class="footer-link-menu"><i class="fas fa-utensils"></i>Carta</a></li>
-                            <li><a href="#carta" class="footer-link-promociones" data-tab="Promociones"><i class="fas fa-tags"></i>Promociones</a></li>
-                            <li><a href="#sobre-nosotros"><i class="fas fa-users"></i>Nosotros</a></li>
+                            <li>
+                                <a href="#carta" class="footer-link-menu">
+                                    <i class="fas fa-utensils"></i>
+                                    <span style="color:inherit;">Carta</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#carta" class="footer-link-promociones" data-tab="Promociones">
+                                    <i class="fas fa-tags"></i>
+                                    <span style="color:inherit;">Promociones</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#sobre-nosotros" class="footer-link-nosotros">
+                                    <i class="fas fa-users"></i>
+                                    <span style="color:inherit;">Nosotros</span>
+                                </a>
+                            </li>
                             <li>
                                 <a href="https://wa.me/51929844681" target="_blank">
-                                    <i class="fab fa-whatsapp-square"></i>Whatsapp
+                                    <i class="fab fa-whatsapp-square"></i>
+                                    <span style="color:inherit;">Whatsapp</span>
                                 </a>
                             </li>
                             <li>
-                                <a href="https://www.google.com/maps/search/Av.+Santa+Anita+N%C2%B0503,+Urbanizaci%C3%B3n+Villa+Marina+-+Chorrillos+,+Chorrillos,+Peru/@-12.1894204,-77.0151671,18z/data=!3m1!4b1?entry=ttu&g_ep=EgoyMDI1MDYwNC4wIKXMDSoASAFQAw%3D%3D" target="_blank">
-                                    <i class="fas fa-map-marker-alt"></i>Ubicación
+                                <a href="https://www.google.com/maps/search/Av.+Santa+Anita+N%C2%B0503,+Urbanizaci%C3%B3n+Villa+Marina+-+Chorrillos+,+Chorrillos,+Peru/@-12.1894204,-77.0151671,18z/data=!3m1!4b1?entry=ttu&g_ep=EgoyMDI1MDYwNC4wIKXMDSoASAFQAw%3D%3D"
+                                    target="_blank">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span style="color:inherit;">Ubicación</span>
                                 </a>
                             </li>
                             <li>
-                                <a href="https://www.facebook.com/PollosalabrazaElBambino/?locale=es_LA" target="_blank">
-                                    <i class="fab fa-facebook-square"></i>Facebook
+                                <a href="https://www.facebook.com/PollosalabrazaElBambino/?locale=es_LA"
+                                    target="_blank">
+                                    <i class="fab fa-facebook-square"></i>
+                                    <span style="color:inherit;">Facebook</span>
                                 </a>
                             </li>
                         </ul>
@@ -518,6 +552,7 @@
     <script src="js/busqueda.js"></script>
     <script src="js/modal-newsletter.js"></script>
     <script src="js/menu-scroll.js"></script>
+    <script src="js/carrusel.js"></script>
     <script>
         AOS.init({
             duration: 1200,
@@ -537,7 +572,7 @@
         var originalTitle = document.title;
         var leaveTitle = "¡No te vayas! 😢";
 
-        document.addEventListener('visibilitychange', function() {
+        document.addEventListener('visibilitychange', function () {
             if (document.hidden) {
                 document.title = leaveTitle;
             } else {

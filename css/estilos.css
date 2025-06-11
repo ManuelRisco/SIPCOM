@@ -531,7 +531,6 @@ footer .foo-row .foo-col ul li a{
 }
 
 footer .foo-row .foo-col ul li a:hover{
-    color: var(--color-principal);
     text-decoration: underline;
 }
 
@@ -540,8 +539,16 @@ footer .foo-row .foo-col ul li a:hover{
   vertical-align: middle;
   margin-right: 7px;
   color: #222;
-  transition: color 0.2s;
+  transition: filter 0.2s;
 }
+
+
+.foo-col ul li a:hover i,
+.foo-col ul li a:focus i {
+  filter: brightness(1.5);
+}
+
+
 .foo-col ul li a .fa-facebook-square {
   color: #1877f3;
   transition: color 0.2s, filter 0.2s;
